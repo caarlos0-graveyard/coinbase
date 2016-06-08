@@ -9,6 +9,8 @@ import (
 )
 
 func CoinbaseClient(key, token string) coinbase.Client {
+	fmt.Println(key)
+	fmt.Println(token)
 	return coinbase.ApiKeyClient(key, token)
 }
 
