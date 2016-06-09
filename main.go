@@ -4,19 +4,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/caarlos0/coinbase/api"
 	"github.com/fabioberger/coinbase-go"
 	"github.com/urfave/cli"
 )
 
-func CoinbaseClient(key, token string) coinbase.Client {
+func CoinbaseClient(key, secret string) coinbase.Client {
 	fmt.Println(key)
-	fmt.Println(token)
-	return coinbase.ApiKeyClient(key, token)
+	fmt.Println(secret)
+	return coinbase.ApiKeyClient(key, secret)
 }
 
 func main() {
 	var key string
-	var token string
+	var secret string
 	app := cli.NewApp()
 	app.Name = "coinbase"
 	app.Flags = []cli.Flag{
@@ -27,10 +28,10 @@ func main() {
 			Destination: &key,
 		},
 		cli.StringFlag{
-			Name:        "token",
-			Usage:       "Coinbase API Token",
-			EnvVar:      "COINBASE_API_TOKEN",
-			Destination: &token,
+			Name:        "secret",
+			Usage:       "Coinbase API Secret",
+			EnvVar:      "COINBASE_API_SECRET",
+			Destination: &secret,
 		},
 	}
 	app.Commands = []cli.Command{
@@ -39,12 +40,14 @@ func main() {
 			Aliases: []string{"b"},
 			Usage:   "get your balance",
 			Action: func(c *cli.Context) error {
-				bal, err := CoinbaseClient(key, token).GetBalance()
+				cc, err := api.New(key, secret)
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Printf("%f BTC", bal)
-				return nil
+				balance, err := cc.Balance()
+				fmt.Printf("%s %s", balance.Amount, balance.Currency)
+				fmt.Println(err)
+				return err
 			},
 		},
 	}
