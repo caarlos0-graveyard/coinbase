@@ -13,11 +13,13 @@ import (
 	"time"
 )
 
+// Client to coinbase api
 type Client struct {
 	client               *http.Client
 	key, secret, BaseURL string
 }
 
+// New secure client
 func New(key, secret string) (*Client, error) {
 	pool := x509.NewCertPool()
 	if ok := pool.AppendCertsFromPEM(certs); !ok {
@@ -36,25 +38,28 @@ func New(key, secret string) (*Client, error) {
 	}, nil
 }
 
+// Do a signed request
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	timestamp, err := c.Epoch()
 	if err != nil {
 		return nil, err
 	}
-	// buf, res := readAndReturn(req.Body)
-	// req.Body = buf
-	message := timestamp + req.Method + html.EscapeString(req.URL.Path) + ""
-	h := hmac.New(sha256.New, []byte(c.secret))
-	h.Write([]byte(message))
-	signature := hex.EncodeToString(h.Sum(nil))
 
-	req.Header.Set("User-Agent", "CoinbaseGo/v1")
+	req.Header.Set("User-Agent", "BeckerCoinbase/v1")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("CB-ACCESS-KEY", c.key)
 	req.Header.Set("CB-ACCESS-TIMESTAMP", timestamp)
-	req.Header.Set("CB-ACCESS-SIGN", signature)
+	req.Header.Set("CB-ACCESS-SIGN", c.sign(timestamp, req))
 
 	return c.client.Do(req)
+}
+
+func (c *Client) sign(timestamp string, req *http.Request) string {
+	// TODO missing body contents on the mix
+	message := timestamp + req.Method + html.EscapeString(req.URL.Path) + ""
+	h := hmac.New(sha256.New, []byte(c.secret))
+	h.Write([]byte(message))
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 func dialTimeout(network, addr string) (net.Conn, error) {

@@ -45,9 +45,11 @@ func main() {
 					fmt.Println(err)
 				}
 				balance, err := cc.Balance()
+				if err != nil {
+					return cli.NewExitError(err.Error(), 1)
+				}
 				fmt.Printf("%s %s", balance.Amount, balance.Currency)
-				fmt.Println(err)
-				return err
+				return nil
 			},
 		},
 	}

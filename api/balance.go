@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Balance json
 type Balance struct {
 	Amount   string `json:"amount"`
 	Currency string `json:"currency"`
@@ -17,22 +18,20 @@ type accounts struct {
 	} `json:"data"`
 }
 
+// Balance of the account
 func (c *Client) Balance() (Balance, error) {
 	accs, err := c.getAccounts()
 	return accs.Data[0].Balance, err
 }
 
+// NativeBalance of the account
 func (c *Client) NativeBalance() (Balance, error) {
 	accs, err := c.getAccounts()
 	return accs.Data[0].NativeBalance, err
 }
 
 func (c *Client) getAccounts() (accounts, error) {
-	req, err := http.NewRequest(
-		"GET",
-		c.BaseURL+"/accounts",
-		nil,
-	)
+	req, err := http.NewRequest("GET", c.BaseURL+"/accounts", nil)
 	if err != nil {
 		return accounts{}, err
 	}
