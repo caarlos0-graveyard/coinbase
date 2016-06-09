@@ -2,24 +2,29 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/caarlos0/coinbase/api"
-	"github.com/fabioberger/coinbase-go"
 	"github.com/urfave/cli"
 )
 
-func CoinbaseClient(key, secret string) coinbase.Client {
-	fmt.Println(key)
-	fmt.Println(secret)
-	return coinbase.ApiKeyClient(key, secret)
+func coinbase(key, secret string) *api.Client {
+	client, err := api.New(key, secret)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return client
 }
+
+const version = "dev"
 
 func main() {
 	var key string
 	var secret string
 	app := cli.NewApp()
 	app.Name = "coinbase"
+	app.Version = version
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "key",
@@ -37,14 +42,23 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:    "balance",
-			Aliases: []string{"b"},
+			Aliases: []string{"bal", "b"},
 			Usage:   "get your balance",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "native, n",
+					Usage: "Native Currency balance",
+				},
+			},
 			Action: func(c *cli.Context) error {
-				cc, err := api.New(key, secret)
-				if err != nil {
-					fmt.Println(err)
+				native := c.Bool("native")
+				var balance api.Balance
+				var err error
+				if native {
+					balance, err = coinbase(key, secret).NativeBalance()
+				} else {
+					balance, err = coinbase(key, secret).Balance()
 				}
-				balance, err := cc.Balance()
 				if err != nil {
 					return cli.NewExitError(err.Error(), 1)
 				}
