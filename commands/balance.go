@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/caarlos0/coinbase/api"
 	"github.com/urfave/cli"
 )
 
@@ -19,18 +18,28 @@ var Balance = cli.Command{
 	},
 	Action: func(c *cli.Context) error {
 		native := c.Bool("native")
-		var balance api.Balance
-		var err error
-		client := coinbase(c)
-		if native {
-			balance, err = client.NativeBalance()
-		} else {
-			balance, err = client.Balance()
-		}
+		accounts, err := coinbase(c).Accounts()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		fmt.Printf("%s %s", balance.Amount, balance.Currency)
+		for _, acc := range accounts {
+			// FIXME improve this
+			if native {
+				fmt.Printf(
+					"%s\t%s\t%s\n",
+					acc.ID,
+					acc.NativeBalance.Amount,
+					acc.NativeBalance.Currency,
+				)
+			} else {
+				fmt.Printf(
+					"%s\t%s\t%s\n",
+					acc.ID,
+					acc.Balance.Amount,
+					acc.Balance.Currency,
+				)
+			}
+		}
 		return nil
 	},
 }
