@@ -11,9 +11,10 @@ type apiTime struct {
 	} `json:"data"`
 }
 
+// Epoch of the server
 func (c *Client) Epoch() (string, error) {
 	var result apiTime
-	resp, err := c.client.Get(c.BaseURL + "/time")
+	resp, err := c.UnsignedGet("/time")
 	if err != nil {
 		return "", err
 	}

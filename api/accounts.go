@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"errors"
-	"net/http"
 )
 
 type accounts struct {
@@ -22,11 +21,7 @@ var ErrAccountNotFound = errors.New("account not found")
 
 // Accounts get all accs
 func (c *Client) Accounts() ([]Account, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+"/accounts", nil)
-	if err != nil {
-		return []Account{}, err
-	}
-	res, err := c.Do(req)
+	res, err := c.Get("/accounts")
 	if err != nil {
 		return []Account{}, err
 	}
@@ -35,7 +30,7 @@ func (c *Client) Accounts() ([]Account, error) {
 	return result.Data, json.NewDecoder(res.Body).Decode(&result)
 }
 
-func (c *Client) account(id string) (Account, error) {
+func (c *Client) findAccount(id string) (Account, error) {
 	accs, err := c.Accounts()
 	if err != nil {
 		return Account{}, err

@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"net/http"
 	"time"
 )
 
@@ -24,17 +23,11 @@ type Transaction struct {
 
 // Transactions for a given account
 func (c *Client) Transactions(accountID string) ([]Transaction, error) {
-	acc, err := c.account(accountID)
+	acc, err := c.findAccount(accountID)
 	if err != nil {
 		return []Transaction{}, err
 	}
-	req, err := http.NewRequest(
-		"GET", c.BaseURL+"/accounts/"+acc.ID+"/transactions", nil,
-	)
-	if err != nil {
-		return []Transaction{}, err
-	}
-	res, err := c.Do(req)
+	res, err := c.Get("/accounts/" + acc.ID + "/transactions")
 	if err != nil {
 		return []Transaction{}, err
 	}
