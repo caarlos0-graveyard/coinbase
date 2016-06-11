@@ -32,7 +32,7 @@ var TransactionList = cli.Command{
 				status = "✓"
 			}
 			fmt.Printf("%s\t", status)
-			MoneyPrintf(native, transaction.NativeAmount, transaction.Amount)
+			MoneyPrintf(native, transaction.Amount, transaction.NativeAmount)
 			fmt.Printf("%s\t", transaction.Created.Format("2006-01-02 15:04"))
 			fmt.Printf("%s\n", transaction.Description)
 		}
