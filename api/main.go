@@ -8,8 +8,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"html"
+	"log"
 	"net"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -34,8 +36,16 @@ func New(key, secret string) (*Client, error) {
 		},
 		key:     key,
 		secret:  secret,
-		baseURL: "https://api.coinbase.com/v2",
+		baseURL: baseURL(),
 	}, nil
+}
+
+func baseURL() string {
+	if os.Getenv("COINBASE_SANDBOX") != "" {
+		log.Println("Using sandbox environment...")
+		return "https://api.sandbox.coinbase.com/v2"
+	}
+	return "https://api.coinbase.com/v2"
 }
 
 // UnsignedGet a path, not signed
