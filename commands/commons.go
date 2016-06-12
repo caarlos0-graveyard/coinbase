@@ -24,5 +24,5 @@ func MoneyPrintf(native bool, money, nativeMoney api.Money) {
 	if !strings.HasPrefix(amount, "-") {
 		amount = "+" + amount
 	}
-	fmt.Printf("%s %s", amount, currency)
+	fmt.Printf("%s %s\t", amount, currency)
 }
