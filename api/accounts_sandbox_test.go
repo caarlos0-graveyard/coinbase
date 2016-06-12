@@ -9,5 +9,5 @@ import (
 func TestListAccounts(t *testing.T) {
 	accs, err := NewTestCli().Accounts()
 	assert.Nil(t, err)
-	assert.Len(t, accs, 2)
+	assert.NotEmpty(t, accs)
 }

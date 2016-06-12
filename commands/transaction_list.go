@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// TransactionList cmd
 var TransactionList = cli.Command{
 	Name:    "transaction-list",
 	Aliases: []string{"list", "ls", "l"},

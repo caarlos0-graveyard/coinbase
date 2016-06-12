@@ -12,6 +12,9 @@ type accounts struct {
 // Account JSON
 type Account struct {
 	ID            string `json:"id"`
+	Name          string `json:"name"`
+	Primary       bool   `json:"primary"`
+	Currency      string `json:"currency"`
 	Balance       Money  `json:"balance"`
 	NativeBalance Money  `json:"native_balance"`
 }

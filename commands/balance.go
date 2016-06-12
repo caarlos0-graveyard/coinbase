@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Balance cmd
 var Balance = cli.Command{
 	Name:    "balance",
 	Aliases: []string{"bal", "b"},
@@ -31,6 +32,7 @@ var Balance = cli.Command{
 			if showID {
 				fmt.Printf("%s\t", acc.ID)
 			}
+			fmt.Printf("%s\t", acc.Name)
 			BalancePrintf(native, acc)
 			fmt.Printf("\n")
 		}
