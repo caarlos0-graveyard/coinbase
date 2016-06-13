@@ -1,6 +1,10 @@
-hash: 78f2d3d6df6db26e73c8e83aaee5adf8f91af610ec09734afddefdeb4fd9102a
-updated: 2016-06-13T19:24:22.103655744-03:00
+hash: 125c4b03dd1bfce331d13a2e6fcefced6a5e55d609b812ef65a19ff718e8deb2
+updated: 2016-06-13T19:55:17.697814808-03:00
 imports:
+- name: github.com/stretchr/testify
+  version: 8d64eb7173c7753d6419fd4a9caf057398611364
+  subpackages:
+  - assert
 - name: github.com/urfave/cli
   version: e5bef42c62aa7d25aba4880dc02b7624f01e9e19
 devImports: []
