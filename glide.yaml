@@ -1,0 +1,3 @@
+package: github.com/caarlos0/coinbase
+import:
+- package: github.com/urfave/cli
