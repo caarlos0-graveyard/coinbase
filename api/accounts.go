@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-type accounts struct {
+type getAccountsResponse struct {
 	Data []Account `json:"data"`
 	Errors
 }
@@ -23,25 +23,31 @@ type Account struct {
 // ErrAccountNotFound is thrown when a acc with the given id was not found
 var ErrAccountNotFound = errors.New("account not found")
 
+// EmptyAccount result
+var EmptyAccount = Account{}
+
+// EmptyAccounts result
+var EmptyAccounts = []Account{}
+
 // Accounts get all accs
 func (c *Client) Accounts() ([]Account, error) {
 	res, err := c.Get("/accounts")
 	if err != nil {
-		return []Account{}, err
+		return EmptyAccounts, err
 	}
 	defer res.Body.Close()
-	var result accounts
+	var result getAccountsResponse
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if res.StatusCode == 200 {
 		return result.Data, err
 	}
-	return []Account{}, c.newAPIError(res.Status, result.Errors)
+	return EmptyAccounts, c.newAPIError(res.Status, result.Errors)
 }
 
 func (c *Client) findAccount(id string) (Account, error) {
 	accs, err := c.Accounts()
 	if err != nil {
-		return Account{}, err
+		return EmptyAccount, err
 	}
 	if id == "" {
 		return accs[0], nil
@@ -51,5 +57,5 @@ func (c *Client) findAccount(id string) (Account, error) {
 			return acc, nil
 		}
 	}
-	return Account{}, ErrAccountNotFound
+	return EmptyAccount, ErrAccountNotFound
 }

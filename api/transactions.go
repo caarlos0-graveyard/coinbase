@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-type transactions struct {
+type getTransactionsResponse struct {
 	Data []Transaction `json:"data"`
 	Errors
 }
 
-type transaction struct {
+type postTransactionsResponse struct {
 	Data Transaction `json:"data"`
 	Errors
 }
@@ -27,6 +27,12 @@ type Transaction struct {
 	Updated      time.Time `json:"updated_at"`
 }
 
+// EmptyTransaction result
+var EmptyTransaction = Transaction{}
+
+// EmptyTransactions result
+var EmptyTransactions = []Transaction{}
+
 // Request JSON
 type Request struct {
 	Type        string `json:"type"`
@@ -41,14 +47,14 @@ type Request struct {
 func (c *Client) Transactions(accountID string) ([]Transaction, error) {
 	acc, err := c.findAccount(accountID)
 	if err != nil {
-		return []Transaction{}, err
+		return EmptyTransactions, err
 	}
 	res, err := c.Get("/accounts/" + acc.ID + "/transactions")
 	if err != nil {
-		return []Transaction{}, err
+		return EmptyTransactions, err
 	}
 	defer res.Body.Close()
-	var result transactions
+	var result getTransactionsResponse
 	return result.Data, json.NewDecoder(res.Body).Decode(&result)
 }
 
@@ -58,7 +64,7 @@ func (c *Client) Transfer(
 ) (Transaction, error) {
 	acc, err := c.findAccount(from)
 	if err != nil {
-		return Transaction{}, err
+		return EmptyTransaction, err
 	}
 	request := Request{
 		Type:        "transfer",
@@ -76,7 +82,7 @@ func (c *Client) Send(
 ) (Transaction, error) {
 	acc, err := c.findAccount(from)
 	if err != nil {
-		return Transaction{}, err
+		return EmptyTransaction, err
 	}
 	request := Request{
 		Type:        "send",
@@ -93,13 +99,13 @@ func (c *Client) transactionsPost(
 ) (Transaction, error) {
 	res, err := c.Post("/accounts/"+acc.ID+"/transactions", request)
 	if err != nil {
-		return Transaction{}, err
+		return EmptyTransaction, err
 	}
 	defer res.Body.Close()
-	var result transaction
+	var result postTransactionsResponse
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if res.StatusCode == 201 {
 		return result.Data, err
 	}
-	return Transaction{}, c.newAPIError(res.Status, result.Errors)
+	return EmptyTransaction, c.newAPIError(res.Status, result.Errors)
 }
