@@ -33,7 +33,7 @@ func TestTransferMoney(t *testing.T) {
 			to = acc
 		}
 	}
-	tx, err := cli.Transfer(from.ID, to.ID, "0.001", "BTC", "some money")
+	tx, err := cli.Transfer(from.ID, to.ID, "0.0000000001", "BTC", "some money")
 	assert.Nil(t, err)
 	assert.Equal(t, tx.Status, "completed")
 }
@@ -51,7 +51,7 @@ func TestSendMoney(t *testing.T) {
 	tx, err := cli.Send(
 		from.ID,
 		"n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF",
-		"0.010232",
+		"0.00000000010232",
 		"BTC",
 		"more money",
 	)
@@ -72,7 +72,7 @@ func TestSendMoneyInvalidAddr(t *testing.T) {
 	tx, err := cli.Send(
 		from.ID,
 		"1dce72d353d64f81833f8cd318405766cb3f09c828fb2e85edf41ed05aded467",
-		"0.010232",
+		"0.00000010232",
 		"BTC",
 		"more money",
 	)
