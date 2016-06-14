@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"html"
 	"log"
 	"net"
@@ -79,12 +80,17 @@ func (c *Client) Post(path string, body interface{}) (*http.Response, error) {
 	return c.client.Do(req)
 }
 
+func (c *Client) newAPIError(status string, errs Errors) error {
+	message := ""
+	for _, error := range errs.List {
+		message = message + "\n" + error.ID + ": " + error.Message
+	}
+	return errors.New(status + ": " + message)
+}
+
 func (c *Client) appendHeaders(req *http.Request, body string) {
 	path := html.EscapeString(req.URL.Path)
-	timestamp, err := c.Epoch()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	timestamp := fmt.Sprintf("%d", time.Now().UTC().Unix())
 
 	req.Header.Set("User-Agent", "BeckerGoCoinbase/v2")
 	req.Header.Set("Content-Type", "application/json")

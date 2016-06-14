@@ -2,16 +2,17 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"time"
 )
 
 type transactions struct {
 	Data []Transaction `json:"data"`
+	Errors
 }
 
 type transaction struct {
 	Data Transaction `json:"data"`
+	Errors
 }
 
 // Transaction JSON
@@ -66,15 +67,39 @@ func (c *Client) Transfer(
 		Currency:    currency,
 		Description: description,
 	}
+	return c.transactionsPost(acc, request)
+}
+
+// Send money from an acc to a btc addr
+func (c *Client) Send(
+	from, to, amount, currency, description string,
+) (Transaction, error) {
+	acc, err := c.findAccount(from)
+	if err != nil {
+		return Transaction{}, err
+	}
+	request := Request{
+		Type:        "send",
+		To:          to,
+		Amount:      amount,
+		Currency:    currency,
+		Description: description,
+	}
+	return c.transactionsPost(acc, request)
+}
+
+func (c *Client) transactionsPost(
+	acc Account, request Request,
+) (Transaction, error) {
 	res, err := c.Post("/accounts/"+acc.ID+"/transactions", request)
 	if err != nil {
 		return Transaction{}, err
 	}
 	defer res.Body.Close()
+	var result transaction
+	err = json.NewDecoder(res.Body).Decode(&result)
 	if res.StatusCode == 201 {
-		var result transaction
-		return result.Data, json.NewDecoder(res.Body).Decode(&result)
+		return result.Data, err
 	}
-
-	return Transaction{}, errors.New(res.Status)
+	return Transaction{}, c.newAPIError(res.Status, result.Errors)
 }
