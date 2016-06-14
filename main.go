@@ -28,6 +28,7 @@ func main() {
 	app.Commands = []cli.Command{
 		commands.Balance,
 		commands.TransactionList,
+		commands.TransactionSend,
 	}
 	app.Run(os.Args)
 }

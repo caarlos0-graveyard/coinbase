@@ -5,15 +5,14 @@ import (
 	"strings"
 
 	"github.com/caarlos0/coinbase/api"
+	"github.com/urfave/cli"
 )
 
-// BalancePrintf prints balance to stdout
-func BalancePrintf(native bool, acc api.Account) {
-	MoneyPrintf(native, acc.Balance, acc.NativeBalance)
+func printfBalance(native bool, acc api.Account) {
+	printfMoney(native, acc.Balance, acc.NativeBalance)
 }
 
-// MoneyPrintf prints money to stdout
-func MoneyPrintf(native bool, money, nativeMoney api.Money) {
+func printfMoney(native bool, money, nativeMoney api.Money) {
 	var amount string
 	var currency string
 	if native {
@@ -27,4 +26,9 @@ func MoneyPrintf(native bool, money, nativeMoney api.Money) {
 		amount = "+" + amount
 	}
 	fmt.Printf("%s %s\t", amount, currency)
+}
+
+var nativeFlag = cli.BoolFlag{
+	Name:  "native, n",
+	Usage: "Use native currency",
 }

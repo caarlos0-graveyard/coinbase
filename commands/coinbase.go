@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func coinbase(c *cli.Context) *api.Client {
+func client(c *cli.Context) *api.Client {
 	client, err := api.New(
 		c.Parent().String("key"),
 		c.Parent().String("secret"),

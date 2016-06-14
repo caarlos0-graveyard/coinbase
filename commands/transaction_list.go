@@ -8,22 +8,19 @@ import (
 
 // TransactionList cmd
 var TransactionList = cli.Command{
-	Name:    "transaction-list",
-	Aliases: []string{"list", "ls", "l"},
+	Name:    "list",
+	Aliases: []string{"ls"},
 	Usage:   "list your last transactions",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "native, n",
-			Usage: "Native Currency balance",
-		},
+		nativeFlag,
 		cli.StringFlag{
-			Name:  "account-id, acc, id",
+			Name:  "acc, id",
 			Usage: "account id (you can get it from balance)",
 		},
 	},
 	Action: func(c *cli.Context) error {
 		native := c.Bool("native")
-		transactions, err := coinbase(c).Transactions(c.String("accounts-id"))
+		transactions, err := client(c).Transactions(c.String("acc"))
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
@@ -33,7 +30,7 @@ var TransactionList = cli.Command{
 				status = "✓"
 			}
 			fmt.Printf("%s\t", status)
-			MoneyPrintf(native, transaction.Amount, transaction.NativeAmount)
+			printfMoney(native, transaction.Amount, transaction.NativeAmount)
 			fmt.Printf("%s\t", transaction.Created.Format("2006-01-02 15:04"))
 			fmt.Printf("%s\n", transaction.Description)
 		}

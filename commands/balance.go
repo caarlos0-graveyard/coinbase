@@ -9,13 +9,10 @@ import (
 // Balance cmd
 var Balance = cli.Command{
 	Name:    "balance",
-	Aliases: []string{"bal", "b"},
+	Aliases: []string{"bal"},
 	Usage:   "get your balance",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "native, n",
-			Usage: "Native Currency balance",
-		},
+		nativeFlag,
 		cli.BoolFlag{
 			Name:  "id",
 			Usage: "Show account id",
@@ -24,7 +21,7 @@ var Balance = cli.Command{
 	Action: func(c *cli.Context) error {
 		native := c.Bool("native")
 		showID := c.Bool("id")
-		accounts, err := coinbase(c).Accounts()
+		accounts, err := client(c).Accounts()
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
@@ -33,7 +30,7 @@ var Balance = cli.Command{
 				fmt.Printf("%s\t", acc.ID)
 			}
 			fmt.Printf("%s\t", acc.Name)
-			BalancePrintf(native, acc)
+			printfBalance(native, acc)
 			fmt.Printf("\n")
 		}
 		return nil

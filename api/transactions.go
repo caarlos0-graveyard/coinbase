@@ -25,6 +25,11 @@ type Transaction struct {
 	NativeAmount Money     `json:"native_amount"`
 	Created      time.Time `json:"created_at"`
 	Updated      time.Time `json:"updated_at"`
+	To           struct {
+		Resource string `json:"resource"`
+		Email    string `json:"email"`
+		ID       string `json:"id"`
+	} `json:"to"`
 }
 
 // EmptyTransaction result

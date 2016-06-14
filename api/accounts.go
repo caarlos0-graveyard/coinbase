@@ -49,11 +49,8 @@ func (c *Client) findAccount(id string) (Account, error) {
 	if err != nil {
 		return EmptyAccount, err
 	}
-	if id == "" {
-		return accs[0], nil
-	}
 	for _, acc := range accs {
-		if acc.ID == id {
+		if acc.ID == id || (id == "" && acc.Primary) {
 			return acc, nil
 		}
 	}
