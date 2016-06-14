@@ -7,6 +7,7 @@ import (
 
 type accounts struct {
 	Data []Account `json:"data"`
+	Errors
 }
 
 // Account JSON
@@ -30,7 +31,11 @@ func (c *Client) Accounts() ([]Account, error) {
 	}
 	defer res.Body.Close()
 	var result accounts
-	return result.Data, json.NewDecoder(res.Body).Decode(&result)
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if res.StatusCode == 200 {
+		return result.Data, err
+	}
+	return []Account{}, c.newAPIError(res.Status, result.Errors)
 }
 
 func (c *Client) findAccount(id string) (Account, error) {
