@@ -12,6 +12,8 @@ const version = "dev"
 func main() {
 	app := cli.NewApp()
 	app.Name = "coinbase"
+	app.Author = "Carlos Alexandro Becker (@caarlos0)"
+	app.Usage = "Client for the Coinbase API"
 	app.Version = version
 	app.Flags = []cli.Flag{
 		cli.StringFlag{

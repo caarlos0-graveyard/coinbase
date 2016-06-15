@@ -18,6 +18,8 @@ import (
 	"time"
 )
 
+const version = "2016-06-11"
+
 // Client to coinbase api
 type Client struct {
 	client           *http.Client
@@ -41,14 +43,6 @@ func New(key, secret string) (*Client, error) {
 		secret: secret,
 		url:    baseURL(),
 	}, nil
-}
-
-func baseURL() string {
-	if os.Getenv("COINBASE_SANDBOX") != "" {
-		log.Println("Using sandbox environment...")
-		return "https://api.sandbox.coinbase.com/v2"
-	}
-	return "https://api.coinbase.com/v2"
 }
 
 // UnsignedGet a path, not signed
@@ -80,6 +74,14 @@ func (c *Client) Post(path string, body interface{}) (*http.Response, error) {
 	return c.client.Do(req)
 }
 
+func baseURL() string {
+	if os.Getenv("COINBASE_SANDBOX") != "" {
+		log.Println("Using sandbox environment...")
+		return "https://api.sandbox.coinbase.com/v2"
+	}
+	return "https://api.coinbase.com/v2"
+}
+
 func (c *Client) newAPIError(status string, errs Errors) error {
 	message := ""
 	for _, error := range errs.List {
@@ -94,7 +96,7 @@ func (c *Client) appendHeaders(req *http.Request, body string) {
 
 	req.Header.Set("User-Agent", "BeckerGoCoinbase/v2")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("CB-VERSION", "2016-06-11")
+	req.Header.Set("CB-VERSION", version)
 	req.Header.Set("CB-ACCESS-KEY", c.key)
 	req.Header.Set("CB-ACCESS-TIMESTAMP", timestamp)
 	req.Header.Set("CB-ACCESS-SIGN", c.sign(timestamp, req.Method, path, body))
